@@ -1,0 +1,39 @@
+/* Buttons */
+QPushButton {
+    background-color: #73e977ff;  
+    color: white;                  
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 12px;
+    border: 3px solid #ffffffff;
+}
+
+QPushButton:hover {
+    background-color: #45A049;
+}
+
+QPushButton:pressed {
+    background-color: #388E3C;
+}
+
+/* QLabel */
+QLabel {
+    font-size: 14px;
+    color: #ffffffff;
+    border: 1px solid #CCCCCC;
+    padding: 10px;
+}
+
+/* QTextEdit */
+QTextEdit {
+    font-size: 13px;
+    border: 1px solid #AAAAAA;
+    padding: 5px;
+    color: #ffffffff;
+}
+
+/* Main Window */
+QWidget {
+    background-color: #0e0027ff;
+}
