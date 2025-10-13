@@ -2,12 +2,11 @@
 import cv2
 import numpy as np
 
-# ---- CONFIG ----
 IMAGE_PATH = "CD.jpeg"
 OUTPUT_PATH = "warped.jpg"
-OUTPUT_SIZE = (600, 780)  # width x height
+OUTPUT_SIZE = (600, 780)
 
-# ---- UTILITY ----
+
 def order_points(pts):
     rect = np.zeros((4,2), dtype="float32")
     s = pts.sum(axis=1)
@@ -18,7 +17,6 @@ def order_points(pts):
     rect[3] = pts[np.argmax(diff)]
     return rect
 
-# ---- PREPROCESSING FUNCTION ----
 def preprocess_sheet(image_path, output_size):
     image = cv2.imread(image_path)
     orig = image.copy()
@@ -56,6 +54,5 @@ def preprocess_sheet(image_path, output_size):
 
     return warped
 
-# ---- MAIN ----
 if __name__ == "__main__":
     preprocess_sheet(IMAGE_PATH, OUTPUT_PATH, OUTPUT_SIZE)

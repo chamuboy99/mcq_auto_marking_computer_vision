@@ -5,11 +5,10 @@ import numpy as np
 from preprocess import preprocess_sheet, OUTPUT_SIZE
 from bubble_detection import detect_bubbles, group_bubbles, detect_answers, visualize_answers_with_key, calculate_score, OPTION_LETTERS, ANSWER_KEY
 
-# ---- CONFIG ----
-INPUT_IMAGE = "AB.jpeg"          # Input scanned sheet
-OUTPUT_IMAGE = "annotated.jpg"   # Output annotated image
+INPUT_IMAGE = "AB.jpeg" 
+OUTPUT_IMAGE = "annotated.jpg"  
 
-NAME_BOX_SIZE = (OUTPUT_SIZE[0], 120)  # Width = sheet width, height = 120 px
+NAME_BOX_SIZE = (OUTPUT_SIZE[0], 120) 
 
 def order_points(pts):
     rect = np.zeros((4,2), dtype="float32")
@@ -22,9 +21,6 @@ def order_points(pts):
     return rect
 
 def extract_name_box(image, top_ratio=0.40):
-    """
-    Extract top name box from original sheet and warp to fixed size
-    """
     h, w = image.shape[:2]
     roi = image[0:int(h*top_ratio), 0:w]
 
@@ -44,7 +40,6 @@ def extract_name_box(image, top_ratio=0.40):
             break
 
     if name_contour is None:
-        # fallback: just resize top crop
         warped_name = cv2.resize(roi, NAME_BOX_SIZE)
     else:
         pts = name_contour.reshape(4,2)
@@ -64,26 +59,21 @@ def add_name_box_and_score(warped_sheet, name_box, score, score_height=50):
     h_sheet, w_sheet = warped_sheet.shape[:2]
     h_name, w_name = name_box.shape[:2]
 
-    # Create canvas with extra space for name box + score text
     canvas_height = h_sheet + h_name + score_height
     canvas = 255 * np.ones((canvas_height, w_sheet, 3), dtype=np.uint8)
 
-    # Place name box at top
     canvas[0:h_name, 0:w_sheet] = name_box
 
     score_y_start = h_name
     score_y_end = h_name + score_height
-    cv2.rectangle(canvas, (0, score_y_start), (w_sheet, score_y_end), (200, 200, 200), -1)  # light gray background
+    cv2.rectangle(canvas, (0, score_y_start), (w_sheet, score_y_end), (200, 200, 200), -1) 
     cv2.putText(canvas, f"Score: {score}/{len(ANSWER_KEY)}", (20, score_y_start + int(score_height*0.7)),
                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
 
-    # 3️⃣ Place annotated sheet below score bar
     canvas[score_y_end:score_y_end+h_sheet, 0:w_sheet] = warped_sheet
 
     return canvas
 
-
-# ---- MAIN PROCESS ----
 if __name__ == "__main__":
     try:
         print(f"📄 Processing: {INPUT_IMAGE}")

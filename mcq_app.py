@@ -13,8 +13,6 @@ from bubble_detection import detect_bubbles, group_bubbles, detect_answers, visu
 NAME_BOX_SIZE = (OUTPUT_SIZE[0], 120)
 SCORE_HEIGHT = 50
 
-# ------------------ Utilities ------------------
-
 def order_points(pts):
     rect = np.zeros((4,2), dtype="float32")
     s = pts.sum(axis=1)

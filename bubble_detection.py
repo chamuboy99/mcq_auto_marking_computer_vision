@@ -35,11 +35,11 @@ def detect_bubbles(warped):
     return bubble_list, thresh
 
 def group_bubbles(bubble_list):
-    bubble_list.sort(key=lambda x: x[1])  # Top to bottom
+    bubble_list.sort(key=lambda x: x[1])
     QUESTIONS = []
     for i in range(0, len(bubble_list), BUBBLES_PER_Q):
         q_bubbles = bubble_list[i:i+BUBBLES_PER_Q]
-        q_bubbles.sort(key=lambda x: x[0])  # Left to right
+        q_bubbles.sort(key=lambda x: x[0])
         QUESTIONS.append(q_bubbles)
     print(f"✅ Total questions detected: {len(QUESTIONS)}")
     return QUESTIONS
@@ -50,19 +50,17 @@ def detect_answers(QUESTIONS, thresh, fill_threshold=70):
     for q_bubbles in QUESTIONS:
         bubble_vals = []
         for idx, (x, y, r) in enumerate(q_bubbles):
-            # Create a mask for the bubble
             mask = np.zeros(thresh.shape, dtype="uint8")
             cv2.circle(mask, (x, y), r, 255, -1)
             mean_val = cv2.mean(thresh, mask=mask)[0]
             bubble_vals.append((idx, mean_val))
         
-        # Detect bubbles with mean_val above the threshold
         filled_bubbles = [idx for idx, val in bubble_vals if val > fill_threshold]
 
         if len(filled_bubbles) == 1:
-            answers.append(filled_bubbles[0])  # Single selection
+            answers.append(filled_bubbles[0])
         else:
-            answers.append(filled_bubbles)     # Multiple selections
+            answers.append(filled_bubbles)
 
     return answers
 
@@ -75,32 +73,24 @@ def visualize_answers_with_key(warped, QUESTIONS, answers, answer_key):
         correct_idx = answer_key[q_idx]
 
         if ans is None:
-            # No selection → show correct answer in cyan
             cv2.circle(warped, (q_bubbles[correct_idx][0], q_bubbles[correct_idx][1]),
                        q_bubbles[correct_idx][2], (255, 255, 0), 2)
             continue
 
-        # Multiple selections
         if isinstance(ans, list):
             for idx in ans:
-                cv2.circle(warped, (q_bubbles[idx][0], q_bubbles[idx][1]), q_bubbles[idx][2], (255,0,0), 2) # Blue
-            # Show correct answer in cyan
+                cv2.circle(warped, (q_bubbles[idx][0], q_bubbles[idx][1]), q_bubbles[idx][2], (255,0,0), 2) 
             cv2.circle(warped, (q_bubbles[correct_idx][0], q_bubbles[correct_idx][1]),
                        q_bubbles[correct_idx][2], (255, 255, 0), 2)
             continue
 
-        # Single selection
         for idx, (x, y, r) in enumerate(q_bubbles):
             if idx == ans:
-                # Determine color for the selected bubble
                 color = (0, 255, 0) if ans == correct_idx else (0, 0, 255)
-                cv2.circle(warped, (x, y), r, color, 2)  # Draw circle only for selected
-            # Draw the option letter for all bubbles
+                cv2.circle(warped, (x, y), r, color, 2)
             cv2.putText(warped, OPTION_LETTERS[idx], (x-10, y-10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
 
-
-        # If wrong answer, show correct in cyan
         if ans != correct_idx:
             cv2.circle(warped, (q_bubbles[correct_idx][0], q_bubbles[correct_idx][1]),
                        q_bubbles[correct_idx][2], (255, 255, 0), 2)
@@ -111,7 +101,6 @@ def calculate_score(answers, answer_key):
     for i, ans in enumerate(answers):
         correct = answer_key[i]
         if isinstance(ans, list):
-            # Multiple selections are considered wrong
             continue
         elif ans == correct:
             score += 1

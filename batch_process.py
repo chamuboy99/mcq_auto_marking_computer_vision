@@ -12,7 +12,6 @@ SCORE_HEIGHT = 50
 
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-# ---------------- UTILITY FUNCTIONS ----------------
 def order_points(pts):
     rect = np.zeros((4,2), dtype="float32")
     s = pts.sum(axis=1)
@@ -65,22 +64,18 @@ def add_name_box_and_score(warped_sheet, name_box, score):
     canvas_height = h_name + SCORE_HEIGHT + h_sheet
     canvas = 255 * np.ones((canvas_height, w_sheet, 3), dtype=np.uint8)
 
-    # Name box
     canvas[0:h_name, 0:w_sheet] = name_box
 
-    # Score bar
     score_y_start = h_name
     score_y_end = h_name + SCORE_HEIGHT
     cv2.rectangle(canvas, (0, score_y_start), (w_sheet, score_y_end), (200, 200, 200), -1)
     cv2.putText(canvas, f"Score: {score}/{len(ANSWER_KEY)}", (20, score_y_start + int(SCORE_HEIGHT*0.7)),
                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
 
-    # Annotated sheet
     canvas[score_y_end:score_y_end+h_sheet, 0:w_sheet] = warped_sheet
 
     return canvas
 
-# ---------------- MAIN BATCH PROCESS ----------------
 if __name__ == "__main__":
     for filename in os.listdir(INPUT_FOLDER):
         if not filename.lower().endswith(('.jpg','.jpeg','.png')):
