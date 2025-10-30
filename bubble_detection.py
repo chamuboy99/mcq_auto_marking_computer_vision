@@ -24,7 +24,7 @@ def detect_bubbles(warped):
                                param1=50,
                                param2=30,
                                minRadius=25,
-                               maxRadius=55)
+                               maxRadius=50)
     
     if circles is None:
         raise Exception("❌ No bubbles detected!")
@@ -44,7 +44,7 @@ def group_bubbles(bubble_list):
     print(f"✅ Total questions detected: {len(QUESTIONS)}")
     return QUESTIONS
 
-def detect_answers(QUESTIONS, thresh, fill_threshold=70):
+def detect_answers(QUESTIONS, thresh, fill_threshold=55):
     answers = []
 
     for q_bubbles in QUESTIONS:

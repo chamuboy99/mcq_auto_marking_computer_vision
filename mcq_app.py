@@ -180,6 +180,11 @@ class MCQApp(QWidget):
         self.single_btn.clicked.connect(self.single_process)
         self.layout.addWidget(self.single_btn)
 
+        self.clear_btn = QPushButton("Clear Image")
+        self.clear_btn.clicked.connect(self.clear_image)
+        self.clear_btn.hide()  # hidden until an image is displayed
+        self.layout.addWidget(self.clear_btn)
+
         self.batch_btn = QPushButton("Multiple Sheets")
         self.batch_btn.clicked.connect(self.batch_process)
         self.layout.addWidget(self.batch_btn)
@@ -206,6 +211,12 @@ class MCQApp(QWidget):
         self.log_text.append(message)
         self.log_text.verticalScrollBar().setValue(self.log_text.verticalScrollBar().maximum())
 
+    def clear_image(self):
+        self.image_label.clear()
+        self.image_label.setText("Annotated image will appear here")
+        self.clear_btn.hide()
+        self.append_log("🧹 Image preview cleared.")
+
     # ---------------- Single Image ----------------
     def single_process(self):
         file_name, _ = QFileDialog.getOpenFileName(self, "Select Image", "", "Images (*.jpg *.jpeg *.png)")
@@ -229,6 +240,7 @@ class MCQApp(QWidget):
             self.append_log(f"✅ Saved: {save_name}")
             if display_preview:
                 self.image_label.setPixmap(cv2_to_qpixmap(final_image, max_width=600, max_height=500))
+                self.clear_btn.show()
         except Exception as e:
             self.append_log(f"❌ Failed: {e}")
 
